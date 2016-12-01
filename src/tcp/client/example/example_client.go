@@ -4,6 +4,7 @@ import (
     "net"
     "fmt"
     "bufio"
+    "encoding/binary"
     "os"
 )
 
@@ -28,7 +29,16 @@ func main() {
         fmt.Fprintf(conn, text + "\n")
 
         message, _ := bufio.NewReader(conn).ReadString('\n')
-        fmt.Print("Message from server: " + message)
+        length := len(message)
+
+        fmt.Printf("Writing(%d): %v\n", length, message)
+        encodedMessage := make(byte[], length + 4)
+        copy(encodedMessage[4:], message)
+
+        lengthBytes = encodedMessage[0:4]
+        lengthBuf = bytes.NewBuffer(lengthBytes)
+
+        binary.Write(lengthBuf, binary.LittleEndian, length)
     }
 }
 

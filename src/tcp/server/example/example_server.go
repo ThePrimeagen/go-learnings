@@ -5,6 +5,7 @@ import (
     "net"
     "bufio"
     "strings"
+    "github.com/michaelbpaulson/tcp"
 )
 
 func main() {
@@ -16,6 +17,16 @@ func main() {
         return
     }
 
+    outChannel := tcp.FrameConnections(ln)
+
+    // Every message of Responder will come through here
+    fmt.Println("About to range over channel")
+    for message := range outChannel {
+        fmt.Printf("Received message %v\n", message)
+        conn.Write([]byte(newMessage + "\n"))
+    }
+
+    /*
     fmt.Println("Now Listening...")
     conn, acceptErr := ln.Accept()
     if acceptErr != nil {
@@ -30,5 +41,6 @@ func main() {
         newMessage := strings.ToUpper(message)
         conn.Write([]byte(newMessage + "\n"))
     }
+    */
 }
 
